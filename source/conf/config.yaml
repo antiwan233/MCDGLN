@@ -1,0 +1,33 @@
+defaults:
+  - _self_
+  - model: Trans_HyperGraph
+  - dataset: abide1035aal
+  - optimizer: adam
+  - training: hyper_train
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+cross_validation: True
+n_splits: 5
+seed: 42
+cuda: 0
+
+use_wandb: False
+wandb:
+  entity: beichengnc
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+total_steps: 20000
+
+log_path: outputs
+ckpt_path: temp
+
+time_id: None
+
+# hypergraph or graph
+data_type: hypergraph
+thresh_counts: 10

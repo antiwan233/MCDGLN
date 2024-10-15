@@ -1,0 +1,5 @@
+in_dim: 200
+hidden_dim: 100
+gnn_pooling: mean
+
+name: GCN
