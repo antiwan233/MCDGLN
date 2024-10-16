@@ -1,0 +1,21 @@
+# gcn
+gnn_pooling: mean+max
+in_dim: 116
+hidden_dim: 512
+
+SAGRate: 0.3
+
+# E2E
+E2E_channels: 16
+
+#sliding windows
+window_size: 50
+stride: 5
+
+#attention
+num_heads: 8
+dim_feedforward: 1024
+num_transforer_encoder_layers: 6
+
+#loss
+lambda_1: 9.96e-5

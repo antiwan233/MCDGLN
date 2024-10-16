@@ -1,9 +1,9 @@
 defaults:
   - _self_
-  - model: Trans_HyperGraph
+  - model: mcdgln
   - dataset: abide1035aal
   - optimizer: adam
-  - training: hyper_train
+  - training: train
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
 
@@ -29,5 +29,5 @@ ckpt_path: temp
 time_id: None
 
 # hypergraph or graph
-data_type: hypergraph
+data_type: graph
 thresh_counts: 10

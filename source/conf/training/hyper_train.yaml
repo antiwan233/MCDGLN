@@ -1,8 +1,0 @@
-total_steps: 60000
-steps_per_epoch: 130
-batch_size: 8
-
-name: Hyper_Train
-epochs: 300
-early_stop: 300
-#grad_clip: 1.0
