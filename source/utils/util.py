@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import random
+from .retain_top_percent import retain_top_percent
 
 
 def set_seed(seed):
@@ -13,7 +14,8 @@ def set_seed(seed):
 
 def sliding_windows(data: np.ndarray,
                     window_size: int,
-                    stride: int):
+                    stride: int,
+                    is_retain: bool = False) -> np.ndarray:
     """
     :param data: 一般形状为N*V*T
     :param window_size:
@@ -39,6 +41,9 @@ def sliding_windows(data: np.ndarray,
 
     # 处理计算FC后的nan、posinf、neginf
     out_fc = np.nan_to_num(out_fc, nan=0, posinf=1, neginf=-1)
+
+    if is_retain:
+        out_fc = retain_top_percent(out_fc)
 
     # print(True in np.isnan(out_fc))
     # print(True in np.isinf(out_fc))

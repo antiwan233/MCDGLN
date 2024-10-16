@@ -29,5 +29,6 @@ ckpt_path: temp
 time_id: None
 
 # hypergraph or graph
-data_type: graph
+data_type: sliding_window
+cut_timeseries_length: 75
 thresh_counts: 10

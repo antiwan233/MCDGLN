@@ -19,3 +19,5 @@ num_transforer_encoder_layers: 6
 
 #loss
 lambda_1: 9.96e-5
+
+name: MCDGLN

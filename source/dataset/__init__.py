@@ -2,13 +2,14 @@ from typing import List, Tuple, Any, Union
 import numpy
 import numpy as np
 from omegaconf import DictConfig, open_dict
-from torch_geometric.data import Data, hypergraph_data
+from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from .load_abide import load_abide
 from .load_mdd import load_mdd
 from .load_adhd import load_adhd
 from sklearn.model_selection import train_test_split
 from .construct_dataset import construct_graph_dataset, construct_hypergraph_dataset
+from .construct_dataset import construct_sliding_window_dataset
 
 
 def dataset_factory(cfg: DictConfig) -> Tuple[List[Union[Data,]], Any, Any]:

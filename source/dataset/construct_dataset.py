@@ -1,8 +1,8 @@
 from omegaconf import DictConfig
 from typing import Any, List, Tuple, Union
 import numpy as np
-from source.utils import retain_top_percent, get_hyperedges
-from torch_geometric.data import Data, hypergraph_data
+from source.utils import retain_top_percent, get_hyperedges, sliding_windows
+from torch_geometric.data import Data
 from itertools import compress
 import torch
 from .load_abide import load_abide
@@ -69,7 +69,7 @@ def construct_hypergraph_dataset(cfg: DictConfig) -> Tuple[List[Data], Any, Any]
 
     tc, corr, labels, sites = eval(dataset_func)(cfg.dataset.atlas)
 
-    # 首先通过卡阈值的方式，去除FC中的噪声，有效。
+    # 首先通过保留top百分比的方式，去除FC中的噪声，有效。
     threshold_corr = threshing(corr, cfg.dataset.percent)
 
     # 将array转为tensor
@@ -93,3 +93,34 @@ def construct_hypergraph_dataset(cfg: DictConfig) -> Tuple[List[Data], Any, Any]
     return hypergraph_list, labels, sites
 
 
+# 构造滑动窗口数据集
+def construct_sliding_window_dataset(cfg: DictConfig) -> Tuple[List[Data], Any, Any]:
+
+    dataset_name = cfg.dataset.name
+
+    dataset_func = "load_" + dataset_name
+
+    tc, corr, labels, sites = eval(dataset_func)(cfg.dataset.atlas)
+
+    # 首先通过保留top百分比的方式，去除FC中的噪声，有效。
+    # 如果要把这个作为嵌入特征的话，最好不要卡阈值，会丢失信息
+    threshold_corr = threshing(corr, cfg.dataset.percent)
+
+    windows = sliding_windows(tc[:, :, cfg.cut_timeseries_length],
+                              cfg.model.window_size,
+                              cfg.model.stride,
+                              is_retain=True)
+
+    windows, threshold_corr, labels = [torch.from_numpy(data).float()
+                                       for data in (windows, threshold_corr, labels)]
+
+    graph_list = MaskableList([])
+    for i in range(tc.shape[0]):
+
+        graph = Data(x=threshold_corr[i],
+                     windows=windows[i],
+                     y=labels[i])
+
+        graph_list.append(graph)
+
+    return graph_list, labels, sites
