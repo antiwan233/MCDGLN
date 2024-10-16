@@ -4,7 +4,7 @@ from typing import List
 import logging
 from torch_geometric.loader import DataLoader
 from .training import Train
-from .Hyper_training import Hyper_Train
+from MCDGLNTrain import MCDGLNTrain
 from torch.optim import Optimizer
 from source.components.lr_scheduler import LRScheduler
 

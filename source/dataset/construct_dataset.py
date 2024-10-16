@@ -1,4 +1,4 @@
-from omegaconf import DictConfig
+from omegaconf import DictConfig, open_dict
 from typing import Any, List, Tuple, Union
 import numpy as np
 from source.utils import retain_top_percent, get_hyperedges, sliding_windows
@@ -104,20 +104,24 @@ def construct_sliding_window_dataset(cfg: DictConfig) -> Tuple[List[Data], Any, 
 
     # 首先通过保留top百分比的方式，去除FC中的噪声，有效。
     # 如果要把这个作为嵌入特征的话，最好不要卡阈值，会丢失信息
-    threshold_corr = threshing(corr, cfg.dataset.percent)
+    # threshold_corr = threshing(corr, cfg.dataset.percent)
 
     windows = sliding_windows(tc[:, :, cfg.cut_timeseries_length],
                               cfg.model.window_size,
                               cfg.model.stride,
-                              is_retain=True)
+                              is_retain=True,
+                              percent=cfg.dataset.percent)
 
-    windows, threshold_corr, labels = [torch.from_numpy(data).float()
-                                       for data in (windows, threshold_corr, labels)]
+    with open_dict(cfg):
+        cfg.model.windows_amount = windows.shape[1]
+
+    windows, corr, labels = [torch.from_numpy(data).float()
+                                       for data in (windows, corr, labels)]
 
     graph_list = MaskableList([])
     for i in range(tc.shape[0]):
 
-        graph = Data(x=threshold_corr[i],
+        graph = Data(x=corr[i],
                      windows=windows[i],
                      y=labels[i])
 

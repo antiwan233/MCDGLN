@@ -14,7 +14,7 @@ from tqdm import tqdm
 import os
 
 
-class Hyper_Train:
+class Train:
 
     def __init__(self,
                  cfg: DictConfig,
@@ -33,8 +33,6 @@ class Hyper_Train:
         self.val_loss = None
         self.train_loss = None
         self.current_step = 0
-
-        self.early_stop = cfg.training.early_stop
 
         self.fold = fold
 
@@ -85,22 +83,16 @@ class Hyper_Train:
             self.current_step += 1
             lr_scheduler.update(optimizer=optimizer, step=self.current_step)
 
-            x, edge_index, edge_weight, batch, labels = data.x.to(self.device), \
-                                                                   data.edge_index.to(self.device), \
-                                                                   data.edge_weight.to(self.device), \
-                                                                   data.batch.to(self.device), \
-                                                                   data.y.to(self.device)
+            x, windows, batch, labels = data.x.to(self.device), data.windows.to(self.device), \
+                                           data.batch.to(self.device), data.y.to(self.device)
 
-            output = self.model(x, edge_index, edge_weight, batch)
+            output = self.model(x, windows, batch)
             predict = torch.argmax(output, dim=1)
             loss = self.loss_fn(output, labels.long())
 
             self.train_loss.update_with_weight(loss.item(), labels.shape[0])
             optimizer.zero_grad()
             loss.backward()
-
-            # torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.cfg.training.grad_clip)
-
             optimizer.step()
 
             batch_accuracy = round(accuracy_score(labels.cpu().numpy(), predict.cpu().numpy()), 5)
@@ -116,13 +108,10 @@ class Hyper_Train:
 
         with torch.no_grad():
             for _, data in enumerate(val_dataloader):
-                x, edge_index, edge_weight, batch, labels = data.x.to(self.device), \
-                                                                       data.edge_index.to(self.device), \
-                                                                       data.edge_weight.to(self.device), \
-                                                                       data.batch.to(self.device), \
-                                                                       data.y.to(self.device)
+                x, windows, batch, labels = data.x.to(self.device), data.windows.to(self.device), \
+                                            data.batch.to(self.device), data.y.to(self.device)
 
-                output = self.model(x, edge_index, edge_weight, batch)
+                output = self.model(x, windows, batch)
                 predict = torch.argmax(output, dim=1)
                 loss = self.loss_fn(output, labels.long())
                 self.val_loss.update_with_weight(loss.item(), labels.shape[0])
@@ -140,13 +129,10 @@ class Hyper_Train:
 
         with torch.no_grad():
             for _, data in enumerate(test_dataloader):
-                x, edge_index, edge_weight, batch, labels = data.x.to(self.device), \
-                                                                       data.edge_index.to(self.device), \
-                                                                       data.edge_weight.to(self.device), \
-                                                                       data.batch.to(self.device), \
-                                                                       data.y.to(self.device)
+                x, windows, batch, labels = data.x.to(self.device), data.windows.to(self.device), \
+                                            data.batch.to(self.device), data.y.to(self.device)
 
-                output = self.model(x, edge_index, edge_weight, batch)
+                output = self.model(x, windows, batch)
                 predict = torch.argmax(output, dim=1)
                 loss = self.loss_fn(output, labels.long())
                 self.test_loss.update_with_weight(loss.item(), labels.shape[0])
@@ -186,7 +172,7 @@ class Hyper_Train:
         else:
             ckpt_path = os.path.join(self.cfg.ckpt_path, "checkpoint.pth")
 
-        early_stopping = EarlyStopping(patience=self.early_stop,
+        early_stopping = EarlyStopping(patience=self.cfg.training.early_stop,
                                        verbose=True,
                                        path=ckpt_path)
 

@@ -1,0 +1,7 @@
+total_steps: 30000
+steps_per_epoch: 100
+batch_size: 8
+
+name: MCDGLNTrain
+epochs: 200
+early_stop: 40

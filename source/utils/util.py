@@ -15,8 +15,11 @@ def set_seed(seed):
 def sliding_windows(data: np.ndarray,
                     window_size: int,
                     stride: int,
-                    is_retain: bool = False) -> np.ndarray:
+                    is_retain: bool = False,
+                    percent: float = None) -> np.ndarray:
     """
+    :param percent:
+    :param is_retain:
     :param data: 一般形状为N*V*T
     :param window_size:
     :param stride:
@@ -43,7 +46,7 @@ def sliding_windows(data: np.ndarray,
     out_fc = np.nan_to_num(out_fc, nan=0, posinf=1, neginf=-1)
 
     if is_retain:
-        out_fc = retain_top_percent(out_fc)
+        out_fc = retain_top_percent(out_fc, percent=percent)
 
     # print(True in np.isnan(out_fc))
     # print(True in np.isinf(out_fc))
