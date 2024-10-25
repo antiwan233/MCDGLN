@@ -66,6 +66,7 @@ class GraphConv(nn.Module):
 
         self.sagpooling = SAGPooling(in_channels=self.hidden_dim, ratio=self.SAGRatio)
         self.gcn_layers = cfg.model.gcn_layers
+        self.gnn_pooling = cfg.model.gnn_pooling
 
         self.mha = nn.MultiheadAttention(self.hidden_dim*self.gcn_layers,
                                          cfg.model.num_heads,
@@ -106,9 +107,9 @@ class GraphConv(nn.Module):
 
         x = torch.cat(torch_list, dim=1)
 
-        x = x.resize(self.batchsize, self.nrois, -1)
+        x = x.reshape(self.batchsize, self.nrois, -1)
 
-        x, attn_weights = self.SelfAttention(x, x, x, mask=None)
+        x, attn_weights = self.mha(x, x, x)
 
         # add & norm
         # x = att_x.reshape(self.batchsize*self.nrois, -1) + x
@@ -132,12 +133,12 @@ class GraphConv(nn.Module):
 
     def readout(self, x, batch):
         # 一次性的readout，还可以尝试hirarchical readout
-        if self.args.gnn_pooling == 'mean':
+        if self.gnn_pooling == 'mean':
             out = global_mean_pool(x, batch)
-        elif self.args.gnn_pooling == 'max':
+        elif self.gnn_pooling == 'max':
             # out = global_max_pool(x, batch, size=8)
             out = global_max_pool(x, batch)
-        elif self.args.gnn_pooling == 'mean+max':
+        elif self.gnn_pooling == 'mean+max':
             out = global_mean_pool(x, batch) + global_max_pool(x, batch)
         else:
             out = global_add_pool(x, batch)

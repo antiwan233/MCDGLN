@@ -10,7 +10,7 @@ np.set_printoptions(threshold=np.inf)
 
 def pick_filename(s):
 
-    match = re.search(r'([A-Za-z0-9_]+)_\d+_rois_cc200.', s)
+    match = re.search(r'^([A-Za-z0-9_]+_\d+)_rois_cc200\.\w+$', s)
     if match:
         return match.group(1)
     else:
@@ -35,6 +35,8 @@ def load_abide(atlas='cc200', num_sample=1035):
         labels[labels == 2] = 0
         sites = pd.read_csv(csv_file)['SITE_ID'].values.squeeze()
 
+        FileIDs = pd.read_csv(csv_file)['FILE_ID'].values.squeeze()
+
         sorted_file_list = sorted(file_list)
         cmu27 = sorted_file_list[0:27]
         sorted_file_list[0:37] = sorted_file_list[27:64]
@@ -51,6 +53,10 @@ def load_abide(atlas='cc200', num_sample=1035):
         sorted_file_list[37:42] = cmu5
 
     # print(sorted_file_list)
+    # for i, s in enumerate(sorted_file_list):
+    #     print(pick_filename(s)==FileIDs[i])
+
+    # print(FileIDs)
 
     # 处理站点信息
 
@@ -119,4 +125,4 @@ def load_abide(atlas='cc200', num_sample=1035):
     return tc, corr, labels, sites
 
 
-# tc, cor, par, labels, sites = load_abide('cc200')
+# tc, cor, labels, sites = load_abide('cc200', 1035)

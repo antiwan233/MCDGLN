@@ -1,0 +1,21 @@
+# gcn
+gnn_pooling: mean+max
+in_dim: 200
+hidden_dim: 200
+dropout: 0.1
+SAGRatio: 0.5
+gcn_layers: 3
+
+# E2E
+E2E_channels: 16
+windows_amount: None
+
+#sliding windows
+window_size: 20
+stride: 3
+
+#attention
+num_heads: 8
+
+num_classes: 2
+name: MCDGLN

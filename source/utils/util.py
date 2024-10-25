@@ -46,7 +46,9 @@ def sliding_windows(data: np.ndarray,
     out_fc = np.nan_to_num(out_fc, nan=0, posinf=1, neginf=-1)
 
     if is_retain:
-        out_fc = retain_top_percent(out_fc, percent=percent)
+        for i in range(out_fc.shape[0]):
+            for j in range(out_fc.shape[1]):
+                out_fc[i][j] = retain_top_percent(out_fc[i][j], percent=percent)
 
     # print(True in np.isnan(out_fc))
     # print(True in np.isinf(out_fc))

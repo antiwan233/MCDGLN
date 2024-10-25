@@ -40,9 +40,7 @@ class MCDGLN(torch.nn.Module):
             self.activation,
             nn.Linear(cfg.dataset.nrois * 20, cfg.dataset.nrois * 10),
             self.activation,
-            nn.Linear(cfg.dataset.nrois * 10, cfg.dataset.nrois * 5),
-            self.activation,
-            nn.Linear(cfg.dataset.nrois * 5, cfg.dataset.nrois),
+            nn.Linear(cfg.dataset.nrois * 10, cfg.model.hidden_dim),
         )
 
         self._init_weights()
@@ -64,7 +62,7 @@ class MCDGLN(torch.nn.Module):
         static_fc = z.contiguous().view(-1, self.nrois, self.nrois)
 
         dynamic_edge_index, dynamic_edge_attr, dynamic_fc = self.CrossConv(windows, batch, self.bs, static_fc)
-        graph_out, attn_weights = self.GraphConv(z, dynamic_edge_index, dynamic_edge_attr)
+        graph_out, attn_weights = self.GraphConv(z, dynamic_edge_index, dynamic_edge_attr, batch)
 
         # 使用dynamic 对static fc进行遮蔽
         # 使用attn_weights对static fc进行增强

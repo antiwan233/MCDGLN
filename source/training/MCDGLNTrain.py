@@ -14,7 +14,7 @@ from tqdm import tqdm
 import os
 
 
-class Train:
+class MCDGLNTrain:
 
     def __init__(self,
                  cfg: DictConfig,
@@ -91,6 +91,7 @@ class Train:
             loss = self.loss_fn(output, labels.long())
 
             self.train_loss.update_with_weight(loss.item(), labels.shape[0])
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()

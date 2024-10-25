@@ -1,13 +1,13 @@
 name: Adam
-lr: 1.9e-8
+lr: 0.000000019
 match_rule: None
 except_rule: None
 no_weight_decay: false
-weight_decay: 2.513e-8
+weight_decay: 0.00000005
 lr_scheduler:
     mode: cos # ['step', 'poly', 'cos']
-    base_lr: 1.0e-5
-    target_lr: 1.0e-6
+    base_lr: 5.0e-6
+    target_lr: 1.0e-8
 
     decay_factor: 0.1 # for step mode
     milestones: [0.3, 0.6, 0.9]

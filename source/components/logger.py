@@ -56,7 +56,7 @@ def set_file_handler(log_file_path: Path) -> logging.Logger:
     return logger
 
 
-def logger_factory() -> logging.Logger:
+def logger_factory(cfg: DictConfig) -> logging.Logger:
 
     # 生成一个log文件夹，用于存放log文件
     # 路径的名称为 result/unique_id
@@ -66,6 +66,8 @@ def logger_factory() -> logging.Logger:
     # logger = set_file_handler(log_file_path=log_path
     #                           / config.unique_id)
 
-    logger = initialize_logger()
+    log_path = Path(cfg.ckpt_path) / "training.log"
+    logger = set_file_handler(log_path)
+    # logger = initialize_logger()
 
     return logger

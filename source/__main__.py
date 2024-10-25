@@ -27,7 +27,7 @@ def model_training(cfg: DictConfig, dataloaders, fold=None):
     model = model_factory(cfg).to(device)
 
     # logger_factory返回的是一个logging.logger对象
-    logger = logger_factory()
+    logger = logger_factory(cfg)
 
     # 检查模型是否在GPU上
     # if next(model.parameters()).is_cuda:

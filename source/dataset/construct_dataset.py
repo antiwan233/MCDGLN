@@ -106,7 +106,7 @@ def construct_sliding_window_dataset(cfg: DictConfig) -> Tuple[List[Data], Any, 
     # 如果要把这个作为嵌入特征的话，最好不要卡阈值，会丢失信息
     # threshold_corr = threshing(corr, cfg.dataset.percent)
 
-    windows = sliding_windows(tc[:, :, cfg.cut_timeseries_length],
+    windows = sliding_windows(tc[:, :, :cfg.cut_timeseries_length],
                               cfg.model.window_size,
                               cfg.model.stride,
                               is_retain=True,

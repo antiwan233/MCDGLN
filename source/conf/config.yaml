@@ -1,15 +1,15 @@
 defaults:
   - _self_
   - model: mcdgln
-  - dataset: abide1035aal
+  - dataset: abide1035cc200
   - optimizer: adam
-  - training: train
+  - training: mcdgln_train
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
 
 cross_validation: True
 n_splits: 5
-seed: 42
+seed: 11404
 cuda: 0
 
 use_wandb: False
